@@ -1,3 +1,4 @@
+import { Op } from 'sequelize'
 import Booking from '../models/booking.js'
 
 const BookingController = {
@@ -54,6 +55,26 @@ const BookingController = {
         }
     },
     async tryStore(req, res) {
+
+        const { startDate, endDate, carId } = req.body
+
+        //Átfedés ellenőrzés
+
+        const overlap = await Booking.findOne({
+            where: {
+                carId: carId,
+                [Op.and]: [
+                    {
+                        startDate: { [Op.lt]: endDate},
+                        endDate: { [Op.gt]: startDate }
+                    }
+                ]
+            }
+        })
+
+        if(overlap) {
+            throw new Error('Az adott időpont már foglalt!')
+        }
         const booking = await Booking.create(req.body)
         res.status(201)
         res.json({

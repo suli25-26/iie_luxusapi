@@ -8,8 +8,29 @@ async function up({context: QueryInterface}) {
       primaryKey: true,
       type: DataTypes.INTEGER
     },
-    name: {
-      type: DataTypes.STRING
+    startDate: { type: DataTypes.DATEONLY,  allowNull: false, 
+        validate: {
+            isAfterNow: function(value) {
+                const today = new Date().toISOString().split('T')[0];
+                if(!(value >= today)) {
+                    throw new Error('A start dátum mai vagy a jövő!');
+                }
+            }
+        }        
+    },
+    endDate: { type: DataTypes.DATEONLY,  allowNull: false  },
+    carId: { type: DataTypes.INTEGER,  allowNull: false  },
+    totalPrice: { type: DataTypes.INTEGER,  allowNull: true, 
+        validate: { max: 2147483647, min: 0 }  
+    },
+    userUID: { type: DataTypes.STRING,  allowNull: false, 
+        validate: {
+            minHossz(value) {
+                if (value && value.length < 1) {
+                    throw new Error('A mezőnek legalább 1 karakter hosszúnak kell lennie!');
+                }
+            },            
+        }
     },
     createdAt: { type: DataTypes.DATE },
     updatedAt: { type: DataTypes.DATE }    

@@ -5,7 +5,7 @@ const Car = sequelize.define('cars', {
     brand: { 
         type: DataTypes.STRING,  
         allowNull: false, 
-        validate: { len: [3,50]}
+        validate: { len: [1,50]}
      },
     model: { type: DataTypes.STRING,  allowNull: false, 
         validate: { len: [1, 50]}  },
